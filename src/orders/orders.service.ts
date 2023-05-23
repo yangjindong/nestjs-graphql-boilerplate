@@ -22,7 +22,10 @@ export class OrdersService {
       .populate('owner', 'email');
   }
 
-  async findAll(): Promise<Order[]> {
-    return this.orderModel.find().exec();
+  async findAll(user): Promise<Order[]> {
+    return this.orderModel
+      .find({ owner: user._id })
+      .populate('owner', 'email')
+      .exec();
   }
 }

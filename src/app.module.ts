@@ -11,7 +11,6 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
 import { OrdersModule } from './orders/orders.module';
-import { ObjectIdScalar } from './scalars';
 import { UsersModule } from './users/users.module';
 @Module({
   imports: [
@@ -35,7 +34,7 @@ import { UsersModule } from './users/users.module';
       sortSchema: true,
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
-      resolvers: { ObjectId: ObjectIdScalar },
+      // resolvers: { ObjectId: ObjectIdScalar },
     }),
     AuthModule,
     UsersModule,

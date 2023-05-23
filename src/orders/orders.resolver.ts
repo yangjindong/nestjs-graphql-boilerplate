@@ -25,7 +25,7 @@ export class OrdersResolver {
 
   @UseGuards(GqlAuthGuard)
   @Query(() => [Order])
-  orders(): Promise<Order[]> {
-    return this.orderService.findAll();
+  orders(@CurrentUser() user: User): Promise<Order[]> {
+    return this.orderService.findAll(user);
   }
 }
