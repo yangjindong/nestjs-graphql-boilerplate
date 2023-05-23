@@ -63,9 +63,7 @@ export class UsersService {
    * @memberof UsersService
    */
   async findOneByEmail(email: string): Promise<UserDocument | undefined> {
-    const user = await this.userModel
-      .findOne({ lowercaseEmail: email.toLowerCase() })
-      .exec();
+    const user = await this.userModel.findOne({ email: email }).exec();
     if (user) return user;
     return undefined;
   }

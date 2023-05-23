@@ -25,7 +25,6 @@ import { UsersModule } from './users/users.module';
       }),
       inject: [ConfigService],
     }),
-
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       // debug: true,

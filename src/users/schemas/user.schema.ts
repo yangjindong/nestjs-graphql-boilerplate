@@ -8,7 +8,6 @@ import { PasswordResetSchema } from './password-reset.type';
 export type UserDocument = User &
   Document & {
     password: string;
-    lowercaseEmail: string;
     passwordReset?: {
       token: string;
       expiration: Date;
@@ -40,13 +39,6 @@ export class User {
   })
   permissions: string[];
 
-  @Field(() => String)
-  @Prop({
-    type: String,
-    unique: true,
-  })
-  lowercaseEmail: string;
-
   @HideField()
   @Prop({ type: PasswordResetSchema })
   passwordReset: typeof PasswordResetSchema;
@@ -75,8 +67,6 @@ UserSchema.statics.validateEmail = function (email: string): boolean {
 };
 
 UserSchema.pre<UserDocument>('save', function (next) {
-  this.lowercaseEmail = this.email.toLowerCase();
-
   // Make sure not to rehash the password if it is already hashed
   if (!this.isModified('password')) {
     return next();
