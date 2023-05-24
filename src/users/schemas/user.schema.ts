@@ -48,6 +48,8 @@ export class User {
     default: true,
   })
   enabled: boolean;
+
+  updatedAt: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

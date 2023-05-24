@@ -50,7 +50,7 @@ export class AuthService {
         user: userToAttempt,
         token,
       };
-      userToAttempt.timestamp = new Date();
+      userToAttempt.updatedAt = new Date();
       userToAttempt.save();
       return result;
     }
@@ -73,7 +73,7 @@ export class AuthService {
 
     // Ensure the user exists and their account isn't disabled
     if (user && user.enabled) {
-      user.timestamp = new Date();
+      user.updatedAt = new Date();
       user.save();
       return user;
     }
