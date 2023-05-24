@@ -48,10 +48,6 @@ export class User {
     default: true,
   })
   enabled: boolean;
-
-  @Field(() => Date)
-  @Prop()
-  timestamp: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
