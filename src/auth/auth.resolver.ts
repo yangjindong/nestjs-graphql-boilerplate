@@ -1,20 +1,24 @@
 import {
+  UseGuards,
   BadRequestException,
   UnauthorizedException,
-  UseGuards,
 } from '@nestjs/common';
 import { Resolver, Args, Query, Context, Mutation } from '@nestjs/graphql';
 
-import { CurrentUser } from '@/decorators/current-user.decorator';
+import { CurrentUser } from '@/auth/decorators';
 
-import { LoginResult, LoginUserInput } from '../users/dto/user.input';
+import {
+  CreateUserInput,
+  LoginResult,
+  LoginUserInput,
+} from '../users/dto/user.input';
 
 import { User, UserDocument } from '../users/schemas/user.schema';
 
 import { UsersService } from './../users/users.service';
 
 import { AuthService } from './auth.service';
-import { GqlAuthGuard } from './guards/gql-auth.guard';
+import { JwtAuthGuard } from './guards';
 
 type Login = {
   user: User;
@@ -42,9 +46,22 @@ export class AuthResolver {
     );
   }
 
+  @Mutation(() => LoginResult)
+  async register(
+    @Args('createUserInput') createUserInput: CreateUserInput,
+  ): Promise<LoginResult> {
+    let createdUser: LoginResult | undefined;
+    try {
+      createdUser = await this.authService.register(createUserInput);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+    return createdUser;
+  }
+
   // There is no username guard here because if the person has the token, they can be any user
-  @UseGuards(GqlAuthGuard)
   @Query(() => String)
+  @UseGuards(JwtAuthGuard)
   async refreshToken(@Context('req') request: any): Promise<string> {
     // console.log(request);
     const user: UserDocument = request.user;
@@ -59,8 +76,8 @@ export class AuthResolver {
     );
   }
 
-  @UseGuards(GqlAuthGuard)
   @Query(() => User)
+  @UseGuards(JwtAuthGuard)
   profile(@CurrentUser() user: User) {
     return this.usersService.findOneByEmail(user.email);
   }

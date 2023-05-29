@@ -16,6 +16,7 @@ import { UsersModule } from './users/users.module';
   imports: [
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
+      inject: [ConfigService],
       useFactory: async (
         configService: ConfigService,
       ): Promise<MongooseModuleOptions> => ({
@@ -23,7 +24,6 @@ import { UsersModule } from './users/users.module';
         useNewUrlParser: true,
         useUnifiedTopology: true,
       }),
-      inject: [ConfigService],
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,

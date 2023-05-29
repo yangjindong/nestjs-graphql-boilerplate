@@ -1,12 +1,17 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { LoginResult, LoginUserInput } from 'src/users/dto/user.input';
+import {
+  CreateUserInput,
+  LoginResult,
+  LoginUserInput,
+} from 'src/users/dto/user.input';
 import { UsersService } from 'src/users/users.service';
 
 import { ConfigService } from '../config/config.service';
 import { User, UserDocument } from '../users/schemas/user.schema';
 
+import { accessTokenExpiresIn } from './auth.constants';
 import { JwtPayload } from './interfaces/jwt-payload.interfaces';
 
 @Injectable()
@@ -82,7 +87,7 @@ export class AuthService {
   }
 
   createJwt(user: User): { data: JwtPayload; token: string } {
-    const expiresIn = this.configService.jwtExpiresIn;
+    const expiresIn = accessTokenExpiresIn;
     let expiration: Date | undefined;
     if (expiresIn) {
       expiration = new Date();
@@ -99,6 +104,15 @@ export class AuthService {
     return {
       data,
       token: jwt,
+    };
+  }
+
+  async register(createUserInput: CreateUserInput): Promise<LoginResult> {
+    const createdUser = await this.usersService.create(createUserInput);
+    const result = this.createJwt(createdUser);
+    return {
+      user: createdUser,
+      token: result.token,
     };
   }
 }

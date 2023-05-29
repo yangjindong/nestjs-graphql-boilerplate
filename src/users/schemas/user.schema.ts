@@ -1,9 +1,7 @@
-import { Field, HideField, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as bcrypt from 'bcryptjs';
-import { Document } from 'mongoose';
-
-import { PasswordResetSchema } from './password-reset.type';
+import { Document, Model, model } from 'mongoose';
 
 export type UserDocument = User &
   Document & {
@@ -14,6 +12,22 @@ export type UserDocument = User &
     };
     checkPassword(password: string): Promise<boolean>;
   };
+
+export interface IUserModel extends Model<UserDocument> {
+  /**
+   * Uses the same method as the schema to validate an email. Matches HTML 5.2 spec.
+   *
+   * @param {string} email address to validate
+   * @returns {boolean} if the email is valid
+   * @memberof IUserModel
+   */
+  validateEmail(email: string): boolean;
+}
+
+export interface IPasswordReset {
+  token: string;
+  expiration: Date;
+}
 
 @Schema({ timestamps: true })
 @ObjectType()
@@ -38,10 +52,6 @@ export class User {
     required: true,
   })
   permissions: string[];
-
-  @HideField()
-  @Prop({ type: PasswordResetSchema })
-  passwordReset: typeof PasswordResetSchema;
 
   @Prop({
     type: Boolean,
@@ -101,3 +111,8 @@ UserSchema.methods.checkPassword = function (
     });
   });
 };
+
+export const UserModel: IUserModel = model<UserDocument, IUserModel>(
+  'User',
+  UserSchema,
+);
