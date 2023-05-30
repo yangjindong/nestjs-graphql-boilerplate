@@ -3,15 +3,18 @@ import { join } from 'path';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 
-import { Module } from '@nestjs/common';
+import { Global, Logger, Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose';
 
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
+import { LoggerModule } from './logger/logger.module';
 import { OrdersModule } from './orders/orders.module';
 import { UsersModule } from './users/users.module';
+
+@Global()
 @Module({
   imports: [
     MongooseModule.forRootAsync({
@@ -39,7 +42,9 @@ import { UsersModule } from './users/users.module';
     UsersModule,
     ConfigModule,
     OrdersModule,
+    LoggerModule,
   ],
-  providers: [],
+  providers: [Logger],
+  exports: [Logger],
 })
 export class AppModule {}

@@ -1,5 +1,8 @@
-import { UseGuards } from '@nestjs/common';
+import { Inject, UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 
 import { AdminAllowedArgs } from '@/auth/decorators';
 import { AdminGuard, EmailAdminGuard, JwtAuthGuard } from '@/auth/guards';
@@ -12,11 +15,15 @@ import { UsersService } from './users.service';
 
 @Resolver(() => User)
 export class UsersResolver {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private usersService: UsersService,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   @Query(() => [User])
   @UseGuards(JwtAuthGuard, AdminGuard)
   users(): Promise<UserDocument[]> {
+    this.logger.info('Calling users()', { resolver: UsersResolver.name });
     return this.usersService.getAllUsers();
   }
 

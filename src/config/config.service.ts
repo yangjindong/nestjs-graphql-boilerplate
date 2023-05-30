@@ -57,6 +57,7 @@ export class ConfigService {
         then: Joi.required(),
       }),
       TEST_EMAIL_TO: Joi.string(),
+      LOG_ON: Joi.boolean().default(true),
     });
 
     const { error, value: validatedEnvConfig } =
@@ -122,5 +123,9 @@ export class ConfigService {
 
   get mongoAuthEnabled(): boolean {
     return Boolean(this.envConfig.MONGO_AUTH_ENABLED).valueOf();
+  }
+
+  get logOn(): boolean {
+    return Boolean(this.envConfig.LOG_ON).valueOf();
   }
 }

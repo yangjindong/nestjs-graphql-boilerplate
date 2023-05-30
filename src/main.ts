@@ -5,7 +5,6 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  // app.useGlobalGuards(new RolesGuard());
   app.useGlobalPipes(
     new ValidationPipe({
       // 去除在类上不存在的字段
