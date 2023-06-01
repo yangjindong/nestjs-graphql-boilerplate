@@ -48,7 +48,7 @@ function createDailyRotateTransport(level: string, filename: string) {
             ...(configService.logOn
               ? [
                   createDailyRotateTransport('info', 'application'),
-                  createDailyRotateTransport('warn', 'error'),
+                  createDailyRotateTransport('warn', 'warn'),
                 ]
               : []),
           ],

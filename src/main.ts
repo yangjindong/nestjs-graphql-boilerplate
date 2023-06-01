@@ -1,7 +1,10 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+
 import { AppModule } from './app.module';
+import { LoggerExceptionFilter } from './filters/logger-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,6 +15,9 @@ async function bootstrap() {
       transform: true,
       transformOptions: { enableImplicitConversion: true },
     }),
+  );
+  app.useGlobalFilters(
+    new LoggerExceptionFilter(app.get(WINSTON_MODULE_NEST_PROVIDER)),
   );
   await app.listen(4000);
 }
